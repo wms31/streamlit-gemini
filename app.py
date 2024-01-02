@@ -34,6 +34,7 @@ with st.sidebar:
     os.environ['GOOGLE_API_KEY'] = api_key
     "[Get a Google Gemini API key](https://ai.google.dev/)"
     "[View the source code](https://github.com/wms31/streamlit-gemini/blob/main/app.py)"
+    "[Check out the blog post!](https://letsaiml.com/creating-google-gemini-app-with-streamlit/)"
 
 # Set the title and caption for the Streamlit app
 st.title("🤖 Google Gemini Models")
@@ -48,8 +49,8 @@ with tab1:
     st.subheader("🌏 Generate travel itineraries")
     
     destination_name = st.text_input("Enter destination name: \n\n",key="destination_name",value="United Arab Emirates")
-    days = st.text_input("How many days would you like the itinerary to be?? \n\n",key="days",value="5")
-    suggested_attraction = st.text_input("What should the first suggested attraction be for the trip?? \n\n",key="suggested_attraction",value="Visiting Burj Khalifa in Dubai.")
+    days = st.text_input("How many days would you like the itinerary to be? \n\n",key="days",value="5")
+    suggested_attraction = st.text_input("What should the first suggested attraction be for the trip? \n\n",key="suggested_attraction",value="Visiting Burj Khalifa in Dubai.")
         
     prompt = f"""Come up with a {days}-day itinerary for a trip to {destination_name}. The first suggested attraction should be {suggested_attraction}
     """
@@ -79,7 +80,7 @@ with tab2:
     
     image_prompt = st.text_input("Ask any question about the image", placeholder="Prompt", label_visibility="visible", key="image_prompt")
     uploaded_file = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png"])
-    image=""
+    image = ""
 
     if uploaded_file is not None:
         image = Image.open(uploaded_file)
@@ -89,10 +90,11 @@ with tab2:
 
     if submit:
         model = genai.GenerativeModel('gemini-pro-vision')
-        if image_prompt!="":
-            response = model.generate_content([image_prompt,image])
-        else:
-            response = model.generate_content(image)
+        with st.spinner("Generating your response using Gemini..."):
+            if image_prompt!="":
+                response = model.generate_content([image_prompt,image])
+            else:
+                response = model.generate_content(image)
         response = response.text
         st.subheader("Gemini's response")
         st.write(response)
